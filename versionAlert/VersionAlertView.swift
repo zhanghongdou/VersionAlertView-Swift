@@ -225,6 +225,8 @@ class VersionAlertView: UIView {
     
     
     func show() {
+        //注意，这里为了避免windows不存在，所以采用的是下诉方法，如果开发者使用到自己的项目中的时候注意改为[UIApplication .sharedApplication().keyWindow?.addSubview(self),否则会添加不成功，如果你不明白原因，建议你去了解一下window的层级显示问题
+        
        UIApplication.sharedApplication().windows[0].addSubview(self)
     }
     
