@@ -15,12 +15,12 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
     }
 
-    @IBAction func btnClick(sender: AnyObject) {
+    @IBAction func btnClick(_ sender: AnyObject) {
         //updateDetailArray:传入更新的内容数组
         //isForcedUpdate:是否进行强制更新
         //versionStr：版本号
         //updateURLString：跳转地址
-        let versionAlertView = VersionAlertView.init(updatedDelArray: ["修复bug","增加内购功能"], isForcedUpdate: true, versionStr: "V2.5.0",updateURLString: "传入appsore跳转地址")
+        let versionAlertView = VersionAlertView.init(updatedDelArray: ["修复bug","增加内购功能"], isForcedUpdate: false, versionStr: "V2.5.0",updateURLString: "传入appsore跳转地址")
         
         versionAlertView.show()
         

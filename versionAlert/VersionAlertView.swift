@@ -8,54 +8,53 @@
 //
 
 import UIKit
-import SnapKit
 class VersionAlertView: UIView {
 
-    private lazy var topImageView: UIImageView = {
+    fileprivate lazy var topImageView: UIImageView = {
         let topImageView = UIImageView.init(image: UIImage.init(named: "wf_appupdate_bg"))
         return topImageView
     }()
-    private lazy var bottomBtn: UIButton = {
+    fileprivate lazy var bottomBtn: UIButton = {
         let bottomBtn = UIButton()
-        bottomBtn.setBackgroundImage(UIImage.init(named: "wf_appupdate_u"), forState: .Normal)
+        bottomBtn.setBackgroundImage(UIImage.init(named: "wf_appupdate_u"), for: UIControlState())
         return bottomBtn
     }()
     
-    private lazy var cancelBtn: UIButton = {
+    fileprivate lazy var cancelBtn: UIButton = {
         let cancelBtn = UIButton()
-        cancelBtn.backgroundColor = UIColor.clearColor()
-        cancelBtn.setBackgroundImage(UIImage.init(named: "later-2"), forState: .Normal)
+        cancelBtn.backgroundColor = UIColor.clear
+        cancelBtn.setBackgroundImage(UIImage.init(named: "later-2"), for: UIControlState())
         return cancelBtn
     }()
     
-    private lazy var titleLabel: UILabel = {
+    fileprivate lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
-        titleLabel.font = UIFont.systemFontOfSize(17)
-        titleLabel.textAlignment = .Center
+        titleLabel.font = UIFont.systemFont(ofSize: 17)
+        titleLabel.textAlignment = .center
         titleLabel.text = "版本更新说明"
         return titleLabel
     }()
     
-    private lazy var backView: UIView = {
-       let backView = UIView.init(frame: UIScreen.mainScreen().bounds)
-       backView.backgroundColor = UIColor.blackColor()
+    fileprivate lazy var backView: UIView = {
+       let backView = UIView.init(frame: UIScreen.main.bounds)
+       backView.backgroundColor = UIColor.black
        backView.alpha = 0.2
        return backView
     }()
     
-    private lazy var versionView: UIView = {
+    fileprivate lazy var versionView: UIView = {
        let versionView = UIView()
-        versionView.backgroundColor = UIColor.whiteColor()
+        versionView.backgroundColor = UIColor.white
         versionView.clipsToBounds = true
         versionView.layer.cornerRadius = 5
         return versionView
     }()
     
-    private lazy var versionLabel: UILabel = {
+    fileprivate lazy var versionLabel: UILabel = {
        let versionLabel = UILabel()
-        versionLabel.backgroundColor = UIColor.clearColor()
-        versionLabel.textAlignment = .Center
-        versionLabel.textColor = UIColor.whiteColor()
+        versionLabel.backgroundColor = UIColor.clear
+        versionLabel.textAlignment = .center
+        versionLabel.textColor = UIColor.white
         return versionLabel
     }()
     
@@ -67,49 +66,57 @@ class VersionAlertView: UIView {
     
     
     init(updatedDelArray : Array<String>, isForcedUpdate : Bool, versionStr: String, updateURLString: String) {
-        super.init(frame: UIScreen.mainScreen().bounds)
+        super.init(frame: UIScreen.main.bounds)
         self.detailStrArray = updatedDelArray
         self.isforce = isForcedUpdate
         self.updateStringPath = updateURLString
         self.versionLabelText = versionStr
         if self.isforce {
-            self.cancelBtn.hidden = true
+            self.cancelBtn.isHidden = true
         }else{
-            self.cancelBtn.hidden = false
+            self.cancelBtn.isHidden = false
         }
         self.creatUI()
     }
     
     func creatUI() {
         self.addSubview(self.backView)
+        self.versionView.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(self.versionView)
+        self.titleLabel.translatesAutoresizingMaskIntoConstraints = false
         self.versionView.addSubview(self.titleLabel)
+        self.topImageView.translatesAutoresizingMaskIntoConstraints = false
         self.versionView.addSubview(self.topImageView)
+        self.cancelBtn.translatesAutoresizingMaskIntoConstraints = false
         self.versionView.addSubview(self.cancelBtn)
+        self.versionLabel.translatesAutoresizingMaskIntoConstraints = false
         self.versionView.addSubview(self.versionLabel)
         self.versionLabel.text = self.versionLabelText
+        self.bottomBtn.translatesAutoresizingMaskIntoConstraints = false
         self.versionView.addSubview(self.bottomBtn)
-        self.bottomBtn.addTarget(self, action: #selector(VersionAlertView.updateRightNow(_:)), forControlEvents: .TouchUpInside)
-        self.cancelBtn.addTarget(self, action: #selector(VersionAlertView.updateLater(_:)), forControlEvents: .TouchUpInside)
+        self.bottomBtn.addTarget(self, action: #selector(VersionAlertView.updateRightNow(_:)), for: .touchUpInside)
+        self.cancelBtn.addTarget(self, action: #selector(VersionAlertView.updateLater(_:)), for: .touchUpInside)
         self.creatAllLabel()
         self.setLayout()
     }
     
-    func updateRightNow(sender : UIButton) {
-        UIApplication.sharedApplication().openURL(NSURL.init(string: self.updateStringPath)!)
+    func updateRightNow(_ sender : UIButton) {
+        UIApplication.shared.openURL(URL.init(string: self.updateStringPath)!)
     }
     
-    func updateLater(sender : UIButton) {
-        UIView.animateWithDuration(0.3, delay: 0, options: .CurveLinear, animations: {
-            self.versionView.snp_remakeConstraints { (make) in
-                make.left.equalTo(self.backView.snp_left).offset(30)
-                make.right.equalTo(self.backView.snp_right).offset(-30)
-                make.centerX.equalTo(self.backView)
-                make.top.equalTo(self.backView.snp_bottom)
+    func updateLater(_ sender : UIButton) {
+        for constraint in self.constraints {
+            if constraint.firstAttribute == .centerY && constraint.firstItem as! NSObject == self.versionView && constraint.secondItem as! NSObject == self.backView {
+                self.removeConstraint(constraint)
+                UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveLinear, animations: { 
+                    self.backView.alpha = 0.05
+                    let versionViewTop = NSLayoutConstraint.init(item: self.versionView, attribute: .top, relatedBy: .equal, toItem: self.backView, attribute: .bottom, multiplier: 1.0, constant: 0.0)
+                    versionViewTop.isActive = true
+                    self.layoutIfNeeded()
+                    }, completion: { (finished) in
+                        self.removeFromSuperview()
+                })
             }
-            self.layoutIfNeeded()
-            }) { (finished) in
-                self.removeFromSuperview()
         }
     }
     
@@ -117,9 +124,9 @@ class VersionAlertView: UIView {
         for str in self.detailStrArray {
             let detailLabel = UILabel()
             detailLabel.text = str
-            detailLabel.textColor = UIColor.grayColor()
-            detailLabel.font = UIFont.systemFontOfSize(14)
-            detailLabel.textAlignment = .Center
+            detailLabel.textColor = UIColor.gray
+            detailLabel.font = UIFont.systemFont(ofSize: 14)
+            detailLabel.textAlignment = .center
             detailLabel.numberOfLines = 0
             self.detailAllLabel.append(detailLabel)
             self.versionView.addSubview(detailLabel)
@@ -127,99 +134,126 @@ class VersionAlertView: UIView {
     }
     
     func setLayout() {
-        self.versionView.snp_makeConstraints { (make) in
-            make.left.equalTo(self.backView.snp_left).offset(30)
-            make.center.equalTo(self.backView)
-            make.right.equalTo(self.backView.snp_right).offset(-30)
-        }
         
-        self.topImageView.snp_makeConstraints { (make) in
-            make.left.equalTo(self.versionView)
-            make.right.equalTo(self.versionView)
-            make.top.equalTo(self.versionView)
-            make.height.equalTo(180)
-        }
-
-        self.versionLabel.snp_makeConstraints { (make) in
-            make.centerX.equalTo(self.versionView)
-            make.bottom.equalTo(self.topImageView.snp_bottom).offset(-30)
-            make.height.equalTo(20)
-        }
-
-        self.cancelBtn.snp_makeConstraints { (make) in
-            make.size.equalTo(CGSizeMake(20, 20))
-            make.right.equalTo(self.versionView.snp_right).offset(-10)
-            make.top.equalTo(self.versionView.snp_top).offset(10)
-        }
+        let versionViewLeft = NSLayoutConstraint.init(item: self.versionView, attribute: .left, relatedBy: .equal, toItem: self.backView, attribute: .left, multiplier: 1.0, constant: 30.0)
+        let versionViewCenterX = NSLayoutConstraint.init(item: self.versionView, attribute: .centerX, relatedBy: .equal, toItem: self.backView, attribute: .centerX, multiplier: 1.0, constant: 0.0)
+        let versionViewCenterY = NSLayoutConstraint.init(item: self.versionView, attribute: .centerY, relatedBy: .equal, toItem: self.backView, attribute: .centerY, multiplier: 1.0, constant: 0.0)
+        let versionViewRight = NSLayoutConstraint.init(item: self.versionView, attribute: .right, relatedBy: .equal, toItem: self.backView, attribute: .right, multiplier: 1.0, constant: -30.0)
+        versionViewLeft.isActive = true
+        versionViewCenterX.isActive = true
+        versionViewCenterY.isActive = true
+        versionViewRight.isActive = true
         
-        self.titleLabel.snp_makeConstraints { (make) in
-            make.centerX.equalTo(self.versionView)
-            make.top.equalTo(self.topImageView.snp_bottom).offset(10)
-        }
+        
+        let topImageViewLeft = NSLayoutConstraint.init(item: self.topImageView, attribute: .left, relatedBy: .equal, toItem: self.versionView, attribute: .left, multiplier: 1.0, constant: 0.0)
+        let topImageViewRight = NSLayoutConstraint.init(item: self.topImageView, attribute: .right, relatedBy: .equal, toItem: self.versionView, attribute: .right, multiplier: 1.0, constant: 0.0)
+        let topImageViewTop = NSLayoutConstraint.init(item: self.topImageView, attribute: .top, relatedBy: .equal, toItem: self.versionView, attribute: .top, multiplier: 1.0, constant: 0.0)
+        let topImageViewHeight = NSLayoutConstraint.init(item: self.topImageView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 0, constant: 180.0)
+        topImageViewLeft.isActive = true
+        topImageViewRight.isActive = true
+        topImageViewTop.isActive = true
+        topImageViewHeight.isActive = true
+
+        
+        let versionLabelCenterX = NSLayoutConstraint.init(item: self.versionLabel, attribute: .centerX, relatedBy: .equal, toItem: self.versionView, attribute: .centerX, multiplier: 1.0, constant: 0.0)
+        let versionLabelBottom = NSLayoutConstraint.init(item: self.versionLabel, attribute: .bottom, relatedBy: .equal, toItem: self.topImageView, attribute: .bottom, multiplier: 1.0, constant: -30.0)
+        let versionLabelHeight = NSLayoutConstraint.init(item: self.versionLabel, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 20.0)
+        versionLabelCenterX.isActive = true
+        versionLabelBottom.isActive = true
+        versionLabelHeight.isActive = true
+        
+        let cancelBtnWidth = NSLayoutConstraint.init(item: self.cancelBtn, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 20.0)
+        let cancelBtnHeight = NSLayoutConstraint.init(item: self.cancelBtn, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 20.0)
+        let cancelBtnRight = NSLayoutConstraint.init(item: self.cancelBtn, attribute: .right, relatedBy: .equal, toItem: self.versionView, attribute: .right, multiplier: 1.0, constant: -10.0)
+        let cancelBtnTop = NSLayoutConstraint.init(item: self.cancelBtn, attribute: .top, relatedBy: .equal, toItem: self.versionView, attribute: .top, multiplier: 1.0, constant: 10)
+        cancelBtnWidth.isActive = true
+        cancelBtnHeight.isActive = true
+        cancelBtnTop.isActive = true
+        cancelBtnRight.isActive = true
+        
+        let titleLabelCenterX = NSLayoutConstraint.init(item: self.titleLabel, attribute: .centerX, relatedBy: .equal, toItem: self.versionView, attribute: .centerX, multiplier: 1.0, constant: 0.0)
+        let titleLabelTop = NSLayoutConstraint.init(item: self.titleLabel, attribute: .top, relatedBy: .equal, toItem: self.topImageView, attribute: .bottom, multiplier: 1.0, constant: 10.0)
+        titleLabelTop.isActive = true
+        titleLabelCenterX.isActive = true
+        
         
         if self.detailStrArray.count > 0 {
             if self.detailStrArray.count == 1 {
                 let label = self.detailAllLabel[0]
-                label.snp_makeConstraints { (make) in
-                    make.left.equalTo(self.versionView.snp_left).offset(10)
-                    make.right.equalTo(self.versionView.snp_right).offset(-10)
-                    make.top.equalTo(self.titleLabel.snp_bottom).offset(10)
-                }
+                label.translatesAutoresizingMaskIntoConstraints = false
+                let labelLeft = NSLayoutConstraint.init(item: label, attribute: .left, relatedBy: .equal, toItem: self.versionView, attribute: .left, multiplier: 1.0, constant: 10.0)
+                let labelRight = NSLayoutConstraint.init(item: label, attribute: .right, relatedBy: .equal, toItem: self.versionView, attribute: .right, multiplier: 1.0, constant: -10.0)
+                let labelTop = NSLayoutConstraint.init(item: label, attribute: .top, relatedBy: .equal, toItem: self.titleLabel, attribute: .bottom, multiplier: 1.0, constant: 10.0)
+                labelLeft.isActive = true
+                labelRight.isActive = true
+                labelTop.isActive = true
             }
             
             if self.detailStrArray.count == 2 {
                 let label1 = self.detailAllLabel[0]
-                label1.snp_makeConstraints(closure: { (make) in
-                    make.left.equalTo(self.versionView.snp_left).offset(10)
-                    make.right.equalTo(self.versionView.snp_right).offset(-10)
-                    make.top.equalTo(self.titleLabel.snp_bottom).offset(10)
-                })
+                label1.translatesAutoresizingMaskIntoConstraints = false
+                let label1Left = NSLayoutConstraint.init(item: label1, attribute: .left, relatedBy: .equal, toItem: self.versionView, attribute: .left, multiplier: 1.0, constant: 10.0)
+                let label1Right = NSLayoutConstraint.init(item: label1, attribute: .right, relatedBy: .equal, toItem: self.versionView, attribute: .right, multiplier: 1.0, constant: -10.0)
+                let label1Top = NSLayoutConstraint.init(item: label1, attribute: .top, relatedBy: .equal, toItem: self.titleLabel, attribute: .bottom, multiplier: 1.0, constant: 10.0)
+                label1Left.isActive = true
+                label1Right.isActive = true
+                label1Top.isActive = true
                 
                 let label2 = self.detailAllLabel[1]
-                label2.snp_makeConstraints(closure: { (make) in
-                    make.left.equalTo(self.versionView.snp_left).offset(10)
-                    make.right.equalTo(self.versionView.snp_right).offset(-10)
-                    make.top.equalTo(label1.snp_bottom).offset(10)
-                })
+                label2.translatesAutoresizingMaskIntoConstraints = false
+                let label2Left = NSLayoutConstraint.init(item: label2, attribute: .left, relatedBy: .equal, toItem: self.versionView, attribute: .left, multiplier: 1.0, constant: 10.0)
+                let label2Right = NSLayoutConstraint.init(item: label2, attribute: .right, relatedBy: .equal, toItem: self.versionView, attribute: .right, multiplier: 1.0, constant: -10.0)
+                let label2Top = NSLayoutConstraint.init(item: label2, attribute: .top, relatedBy: .equal, toItem: label1, attribute: .bottom, multiplier: 1.0, constant: 10.0)
+                label2Left.isActive = true
+                label2Right.isActive = true
+                label2Top.isActive = true
             }
             
             if self.detailStrArray.count > 2 {
                 
-                for (index, label) in self.detailAllLabel.enumerate() {
+                for (index, label) in self.detailAllLabel.enumerated() {
+                    label.translatesAutoresizingMaskIntoConstraints = false
                     if index == 0 {
-                        label.snp_makeConstraints { (make) in
-                            make.left.equalTo(self.versionView.snp_left).offset(10)
-                            make.right.equalTo(self.versionView.snp_right).offset(-10)
-                            make.top.equalTo(self.titleLabel.snp_bottom).offset(10)
-                        }
+                        let labelLeft = NSLayoutConstraint.init(item: label, attribute: .left, relatedBy: .equal, toItem: self.versionView, attribute: .left, multiplier: 1.0, constant: 10.0)
+                        let labelRight = NSLayoutConstraint.init(item: label, attribute: .right, relatedBy: .equal, toItem: self.versionView, attribute: .right, multiplier: 1.0, constant: -10.0)
+                        let labelTop = NSLayoutConstraint.init(item: label, attribute: .top, relatedBy: .equal, toItem: self.titleLabel, attribute: .bottom, multiplier: 1.0, constant: 10.0)
+                        labelLeft.isActive = true
+                        labelRight.isActive = true
+                        labelTop.isActive = true
                     }else{
                         let lastLabel = self.detailAllLabel[index - 1]
-                            label.snp_makeConstraints { (make) in
-                                make.left.equalTo(self.versionView.snp_left).offset(10)
-                                make.right.equalTo(self.versionView.snp_right).offset(-10)
-                                make.top.equalTo(lastLabel.snp_bottom).offset(10)
+                        let labelLeft = NSLayoutConstraint.init(item: label, attribute: .left, relatedBy: .equal, toItem: self.versionView, attribute: .left, multiplier: 1.0, constant: 10.0)
+                        let labelRight = NSLayoutConstraint.init(item: label, attribute: .right, relatedBy: .equal, toItem: self.versionView, attribute: .right, multiplier: 1.0, constant: -10.0)
+                        let labelTop = NSLayoutConstraint.init(item: label, attribute: .top, relatedBy: .equal, toItem: lastLabel, attribute: .bottom, multiplier: 1.0, constant: 10.0)
+                        labelLeft.isActive = true
+                        labelRight.isActive = true
+                        labelTop.isActive = true
                         }
                     }
                     
                 }
-            }
             
-            self.bottomBtn.snp_makeConstraints { (make) in
-                make.left.equalTo(self.versionView.snp_left).offset(80)
-                make.right.equalTo(self.versionView.snp_right).offset(-80)
-                make.top.equalTo(self.detailAllLabel.last!.snp_bottom).offset(10)
-                make.bottom.equalTo(self.versionView.snp_bottom).offset(-10)
-                make.height.equalTo(60)
-            }
-            
+            let bottomBtnLeft = NSLayoutConstraint.init(item: self.bottomBtn, attribute: .left, relatedBy: .equal, toItem: self.versionView, attribute: .left, multiplier: 1.0, constant: 80.0)
+            let bottomBtnRight = NSLayoutConstraint.init(item: self.bottomBtn, attribute: .right, relatedBy: .equal, toItem: self.versionView, attribute: .right, multiplier: 1.0, constant: -80.0)
+            let bottomBtnTop = NSLayoutConstraint.init(item: self.bottomBtn, attribute: .top, relatedBy: .equal, toItem: self.detailAllLabel.last, attribute: .bottom, multiplier: 1.0, constant: 10.0)
+            let bottomBtnBottom = NSLayoutConstraint.init(item: self.bottomBtn, attribute: .bottom, relatedBy: .equal, toItem: self.versionView, attribute: .bottom, multiplier: 1.0, constant: -10.0)
+            let bottomBtnHeight = NSLayoutConstraint.init(item: self.bottomBtn, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 60.0)
+            bottomBtnLeft.isActive = true
+            bottomBtnRight.isActive = true
+            bottomBtnBottom.isActive = true
+            bottomBtnTop.isActive = true
+            bottomBtnHeight.isActive = true
         }else{
-            self.bottomBtn.snp_makeConstraints { (make) in
-                make.left.equalTo(self.versionView.snp_left).offset(80)
-                make.right.equalTo(self.versionView.snp_right).offset(-80)
-                make.top.equalTo(self.titleLabel.snp_bottom).offset(10)
-                make.bottom.equalTo(self.versionView.snp_bottom).offset(-10)
-                make.height.equalTo(44)
-            }
+            let bottomBtnLeft = NSLayoutConstraint.init(item: self.bottomBtn, attribute: .left, relatedBy: .equal, toItem: self.versionView, attribute: .left, multiplier: 1.0, constant: 80.0)
+            let bottomBtnRight = NSLayoutConstraint.init(item: self.bottomBtn, attribute: .right, relatedBy: .equal, toItem: self.versionView, attribute: .right, multiplier: 1.0, constant: -80.0)
+            let bottomBtnTop = NSLayoutConstraint.init(item: self.bottomBtn, attribute: .top, relatedBy: .equal, toItem: self.titleLabel, attribute: .bottom, multiplier: 1.0, constant: 10.0)
+            let bottomBtnBottom = NSLayoutConstraint.init(item: self.bottomBtn, attribute: .bottom, relatedBy: .equal, toItem: self.versionView, attribute: .bottom, multiplier: 1.0, constant: -10)
+            let bottomBtnHeight = NSLayoutConstraint.init(item: self.bottomBtn, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 44.0)
+            bottomBtnLeft.isActive = true
+            bottomBtnRight.isActive = true
+            bottomBtnBottom.isActive = true
+            bottomBtnTop.isActive = true
+            bottomBtnHeight.isActive = true
         }
     }
     
@@ -227,7 +261,8 @@ class VersionAlertView: UIView {
     func show() {
         //注意，这里为了避免windows不存在，所以采用的是下诉方法，如果开发者使用到自己的项目中的时候注意改为[UIApplication .sharedApplication().keyWindow?.addSubview(self),否则会添加不成功，如果你不明白原因，建议你去了解一下window的层级显示问题
         
-       UIApplication.sharedApplication().windows[0].addSubview(self)
+       UIApplication.shared.windows[0].addSubview(self)
+        
     }
     
     required init?(coder aDecoder: NSCoder) {

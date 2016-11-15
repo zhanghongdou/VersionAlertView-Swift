@@ -98,12 +98,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 048147D71D5ADA890031E8AE /* Build configuration list for PBXNativeTarget "versionAlert" */;
 			buildPhases = (
-				C693DD9758AAEE326D834F9C /* 📦 Check Pods Manifest.lock */,
+				C693DD9758AAEE326D834F9C /* [CP] Check Pods Manifest.lock */,
 				048147C11D5ADA890031E8AE /* Sources */,
 				048147C21D5ADA890031E8AE /* Frameworks */,
 				048147C31D5ADA890031E8AE /* Resources */,
-				B01266335DF4F3CF8A2B6C01 /* 📦 Embed Pods Frameworks */,
-				72E8A8E2E8E738BC8E286415 /* 📦 Copy Pods Resources */,
+				B01266335DF4F3CF8A2B6C01 /* [CP] Embed Pods Frameworks */,
+				72E8A8E2E8E738BC8E286415 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -127,6 +127,7 @@
 					048147C41D5ADA890031E8AE = {
 						CreatedOnToolsVersion = 7.3;
 						DevelopmentTeam = E72K3Q86M5;
+						LastSwiftMigration = 0800;
 					};
 				};
 			};
@@ -162,14 +163,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		72E8A8E2E8E738BC8E286415 /* 📦 Copy Pods Resources */ = {
+		72E8A8E2E8E738BC8E286415 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -177,14 +178,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-versionAlert/Pods-versionAlert-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B01266335DF4F3CF8A2B6C01 /* 📦 Embed Pods Frameworks */ = {
+		B01266335DF4F3CF8A2B6C01 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -192,14 +193,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-versionAlert/Pods-versionAlert-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C693DD9758AAEE326D834F9C /* 📦 Check Pods Manifest.lock */ = {
+		C693DD9758AAEE326D834F9C /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -338,6 +339,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lsf.versionAlert;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -352,6 +354,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lsf.versionAlert;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
