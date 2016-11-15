@@ -4,7 +4,7 @@
 <body>
 <h2>什么是 VersionAlertView-Swift</h2>
 <p>这是一个基于swift语言实现更新版本提示框</p>
-
+<p>OC代码链接：https://github.com/zhanghongdou/VersionAlertView-OC.git </p>
 <h2>效果图展示</h2>
 
 <h3>强制更新效果图</h3>
